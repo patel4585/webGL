@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>WebGL Template</title>
+
+   <!-- This in-line script is a vertex shader resource
+      Shaders can be linked from an external file as well.
+      First line must be shader language version, no spaces before.
+      (Actually textbook's shader loader strips leading spaces...)
+      -->
+   <script id="vertex-shader" type="x-shader/x-vertex">
+        #version 300 es
+
+        in  vec2 vPosition; //receives incoming vertex positions
+        in vec4 vColor; // Per vertex colour input
+        uniform vec4 uColor;
+        
+        out vec4 color;    //passes the colour of this vertex to the fragment shader
+        
+        void main()
+        {
+        //Add z and w coordinates to the incoming position and pass it on.
+        gl_Position = vec4(vPosition, 0.0, 1.0);
+        
+        //Colour every vertex red
+        color = vColor; //colour channels are red, green, blue and alpha
+        }
+   </script>
+
+   <!-- This in-line script is a vertex shader resource
+      Shaders can be linked from an external file as well.
+      First line must be shader language version, no spaces before.
+      (Actually textbook's shader loader strips the spaces...) -->
+   <script id="fragment-shader" type="x-shader/x-fragment">
+        #version 300 es
+        precision mediump float;
+        
+        in vec4 color;  //The blended fragment colour from the vertex shader.
+                        //Names of inputs to a fragment shader must match
+                        //an output from the vertex shader.
+        
+        out vec4 fragColor;
+        
+        void main()
+        {
+            fragColor = color;
+        }
+   </script>
+
+   <!-- These are external javascript files.
+      The first three are the textbook libraries.
+      The last one is your own javascript code. Make sure to change the name
+      to match your javascript file. -->
+   <script type="text/javascript" src="../Common/utility.js"></script>
+   <script type="text/javascript" src="../Common/initShaders.js"></script>
+   <script type="text/javascript" src="../Common/MVnew.js"></script>
+   <script type="text/javascript" src="../Common/flatten.js"></script>
+   <script type="text/javascript" src="Lab2Pra2.js"></script>
+</head>
+
+<body>
+   <!-- This is the canvas - the only HTML element that can render WebGL
+      graphics. You can have more than one WebGL canvas on a web page, but
+      that gets tricky. Stick to one per page for now. -->
+   <canvas id="gl-canvas" width="512" height="512">
+      Oops ... your browser doesn't support the HTML5 canvas element
+   </canvas>
+</body>
+</html>

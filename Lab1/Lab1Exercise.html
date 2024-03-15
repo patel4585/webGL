@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>WebGL Template</title>
+
+   <!-- This in-line script is a vertex shader resource
+      Shaders can be linked from an external file as well.
+      First line must be shader language version, no spaces before.
+      (Actually textbook's shader loader strips leading spaces...)
+      -->
+   <script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+    in  vec4 vPosition;
+    in  vec4 vNormal;
+    in vec3 vColor;
+    
+    uniform mat4 p;
+    uniform mat4 mv; 
+    uniform vec4 lightPosition;
+    
+    out vec4 varColor;
+    
+    float shininess;
+    vec4 ambientProduct;
+    vec4 diffuseProduct;
+    vec4 specularProduct;
+    vec4 mvPosition;
+    mat4 t_mv, t_p;
+    
+    void main()
+    {
+       //initialize variables
+       shininess = 5.0;
+       ambientProduct = vec4(0.2 * vColor, 1);
+       diffuseProduct = vec4(0.8 * vColor,1);
+       specularProduct = vec4(0.3);
+    
+       //Transform the point
+       t_mv = transpose(mv);
+       t_p = transpose(p);
+       mvPosition = t_mv*vPosition;
+       gl_Position = t_p*mvPosition;
+    
+       //Set up Normal, Light, Eye and Half vectors
+       vec3 N = normalize((t_mv*vNormal).xyz);
+       vec3 L = normalize(lightPosition.xyz - mvPosition.xyz);
+       if (lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
+       vec3 E = -normalize(mvPosition.xyz);
+       vec3 H = normalize(L+E);
+    
+       //Calculate diffuse coefficient
+       float Kd = max(dot(L,N), 0.0);
+    
+       //Calculate Blinn-Phong specular coefficient
+       float Ks = pow(max(dot(N,H), 0.0), shininess);
+    
+       //Calculate lit colour for this pixel
+       varColor =  Kd * diffuseProduct + Ks * specularProduct + ambientProduct;
+    }
+   </script>
+
+   <!-- This in-line script is a vertex shader resource
+      Shaders can be linked from an external file as well.
+      First line must be shader language version, no spaces before.
+      (Actually textbook's shader loader strips the spaces...) -->
+   <script id="fragment-shader" type="x-shader/x-fragment">
+        #version 300 es
+
+        // Sets default precision for floats.
+        // Since fragment shaders have no default precision, you must either:
+        //   - set a default before declaring types that use floating point OR
+        //   - specify the precision before each floating point declaration
+        // Choices are lowp, mediump, and highp.
+        precision mediump float;
+    
+        in vec4 varColor;
+        // The output of a fragment shader is sent to draw buffers,
+        // which might be an array or the screen. The default is
+        out vec4 fragColor;
+    
+        void main()
+        {
+        // In general, the fragment shader output should be set,
+        //     but this is not required.
+        // If an output is not set,
+        //    there will be no output to the corresponding draw buffer.
+        fragColor = varColor;
+        }
+   </script>
+
+   <!-- These are external javascript files.
+      The first three are the textbook libraries.
+      The last one is your own javascript code. Make sure to change the name
+      to match your javascript file. -->
+   <script type="text/javascript" src="../Common/utility.js"></script>
+   <script type="text/javascript" src="../Common/initShaders.js"></script>
+   <script type="text/javascript" src="../Common/MVnew.js"></script>
+   <script type="text/javascript" src="../Common/flatten.js"></script>
+   <script type="text/javascript" src="../Common/uofrGraphics.js"></script>
+   <script type="text/javascript" src="Lab1Exercise.js"></script>
+</head>
+
+<body>
+   <!-- This is the canvas - the only HTML element that can render WebGL
+      graphics. You can have more than one WebGL canvas on a web page, but
+      that gets tricky. Stick to one per page for now. -->
+   <canvas id="gl-canvas" width="512" height="512">
+      Oops ... your browser doesn't support the HTML5 canvas element
+   </canvas>
+
+   <br />
+   <select id="colorMenu" >
+    <option value="red">red</option>
+    <option value="blue">blue</option>
+    <option value="green">green</option>
+    <option value="yellow">yellow</option>
+    <option value="cyan">cyan</option>
+    <option value="magenta">magenta</option>
+   </select>
+
+   <p>Press C to change the direction of rotation.</p>
+
+   <input type="range" id="range_1" name="range_1" value="0.5" min="0.1" max="0.9" step="0.1"/>
+   <lable for="range_1">Slider to modify the rotation speed.</lable>
+
+   <h2>Lab QA</h2>
+   <P>
+      <h3>Think About Event Programming.</h3>
+      <p>
+         1) What is an event? <br />
+         --> When a user interacts with the system(webpage), certain actions/events are noted by the browser 
+         and then based on those events, functions can be executed. An example of an event can be a user mouse 
+         clicking on a button, or pressing a certain key on the keyboard. <br /><br />
+
+         2) What kinds of things trigger events - are they always the direct result of a user interaction? <br />
+         --> As mentioned in the previous question's answer things like a user mouse clicking on a button, pressing 
+         a key on keyboard are some common examples of things that trigger events. <br />
+         &nbsp; &nbsp; &nbsp; --> No, they are not always direct result of a user interaction. For example, they 
+            can be time driven. They can be scheduled to occur at a specific time or intervals. <br /><br />
+      </p>
+
+      <h3>Learn About the CS315 Libraries.</h3>
+      <p>
+         1) What is HTML5 and why is it exciting? <br />
+         --> HTML5 is the latest version of Hypertext Markup Language (HTML) that is widely used to make webpages. 
+         It is exciting as it allows us to make dynamic and interactive web pages. <br /><br />
+
+         2) What is WebGL2 based on? <br />
+         --> It is based on OpenGL ES 3.0.  <br /><br />
+
+         3) Name one classic OpenGL Windowing API and provide a link to some official documentation. <br />
+         --> freeglut <br />
+         &nbsp; &nbsp; &nbsp; --> Link to the official documentation: <a href="https://freeglut.sourceforge.net/docs/api.php">https://freeglut.sourceforge.net/docs/api.php</a> <br /><br />
+
+         4) What files are in the textbook's Common folder, and what is in them? (be general, summarize) <br />
+         --> utility.js = Creation and compilation of shader programs <br />
+         &nbsp; &nbsp; &nbsp; flatten.js = A method for converting any vector/array to one dimensional (Float32Array) array <br />
+         &nbsp; &nbsp; &nbsp; initShaders.js = Creating and compiling vertex and fragment shaders (checking for compilation errors) <br />
+         &nbsp; &nbsp; &nbsp; initShaders2.js = Initializing shaders programs <br />
+         &nbsp; &nbsp; &nbsp; initShaders3.js = Mostly similar to initShaders.js (maybe an improved version) <br />
+         &nbsp; &nbsp; &nbsp; MV.js = Helper library created by authors of the book being used in the class. It contains definitions for the functions like vec4, vec3, mix, mat3, etc <br />
+         &nbsp; &nbsp; &nbsp; MVnew.js = It seems pretty much same as MV.js. Maybe an improved version with some bug fixes. <br /><br />
+
+         5) What is in uofrGraphics.js and where does it come from? <br />
+         --> It is a library that simplifies the drawing of a few basic shapes. It comes form the university of Regina. Most probably, 
+         it is developed by current lab instructor for CS315, Alex. <br /><br />
+      </p>
+   </P>
+
+</body>
+</html>

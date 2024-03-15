@@ -1,0 +1,36 @@
+<!-- // I made material for the light bulb on the lamp
+   material.lightBlue = {diffuse: lightblue, ambient: lightblue, specular: lightblue,
+                         shininess: 5}; -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Specular Lighting and Material Properties</title>
+
+<!-- External javascript files. -->
+<script type="text/javascript" src="../Common/initShaders2.js"></script>
+<script type="text/javascript" src="../Common/MVnew.js"></script>
+<script type="text/javascript" src="../Common/flatten.js"></script>
+<script type="text/javascript" src="../Common/uofrGraphics.js"></script>
+<script type="text/javascript" src="../Common/j3di.js"></script>
+<script type="text/javascript" src="L5E.js"></script>
+</head>
+
+<body bgcolor="#606060" text="#ffffff">
+    <!-- This is the canvas - the only HTML element that can render WebGL 
+         graphics. You can have more than one WebGL canvas on a web page, but
+         that gets tricky. Stick to one per page for now. -->
+    <canvas id="gl-canvas" width="800" height="560">
+        Oops ... your browser doesn't support the HTML5 canvas element
+    </canvas>
+	 <table>
+		 <tr>
+			 <td>Sphere Rez:</td>
+			 <td>5</td>
+			 <td><input id="rez" type="range" min="3" max="100" step="1" value="10" style="width: 650px;"></td>
+			 <td> 100</td>
+			 <td id="rezval">fixme</td>
+		 </tr>
+	 </table>
+</body>
+</html>
